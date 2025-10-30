@@ -30,7 +30,7 @@ const getTheses = async (req, res) => {
     }
 
     if (search) {
-      conditions.push('(title LIKE ? OR abstract LIKE ?)');
+      conditions.push('(title LIKE ? OR authors LIKE ?)');
       params.push(`%${search}%`, `%${search}%`);
     }
 
