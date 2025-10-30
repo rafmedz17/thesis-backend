@@ -21,6 +21,12 @@ const updateSettings = async (req, res) => {
   try {
     const { schoolName, schoolLogo, headerBackground, aboutContent } = req.body;
 
+    console.log('📝 Update settings request received:');
+    console.log('  schoolName:', schoolName);
+    console.log('  schoolLogo:', schoolLogo);
+    console.log('  headerBackground:', headerBackground);
+    console.log('  aboutContent:', aboutContent ? `${aboutContent.substring(0, 50)}...` : undefined);
+
     // Get existing settings
     const existingSettings = await query('SELECT * FROM settings LIMIT 1');
 
@@ -57,6 +63,9 @@ const updateSettings = async (req, res) => {
 
     values.push(settingsId);
 
+    console.log('🔄 Executing update query:', `UPDATE settings SET ${updates.join(', ')} WHERE id = ?`);
+    console.log('📊 Values:', values);
+
     await query(
       `UPDATE settings SET ${updates.join(', ')} WHERE id = ?`,
       values
@@ -65,9 +74,12 @@ const updateSettings = async (req, res) => {
     // Get updated settings
     const updatedSettings = await query('SELECT * FROM settings WHERE id = ?', [settingsId]);
 
+    console.log('✅ Settings updated successfully');
+    console.log('📤 Returning:', updatedSettings[0]);
+
     res.json(updatedSettings[0]);
   } catch (error) {
-    console.error('Update settings error:', error);
+    console.error('❌ Update settings error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
