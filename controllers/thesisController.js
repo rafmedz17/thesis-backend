@@ -264,10 +264,36 @@ const deleteThesis = async (req, res) => {
   }
 };
 
+// Get unique years from thesis
+const getUniqueYears = async (req, res) => {
+  try {
+    const { department } = req.query;
+
+    let queryStr = 'SELECT DISTINCT year FROM thesis WHERE year IS NOT NULL';
+    const params = [];
+
+    if (department) {
+      queryStr += ' AND department = ?';
+      params.push(department);
+    }
+
+    queryStr += ' ORDER BY year DESC';
+
+    const results = await query(queryStr, params);
+    const years = results.map(row => row.year);
+
+    res.json(years);
+  } catch (error) {
+    console.error('Get unique years error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   getTheses,
   getThesis,
   createThesis,
   updateThesis,
-  deleteThesis
+  deleteThesis,
+  getUniqueYears
 };

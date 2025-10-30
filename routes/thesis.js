@@ -34,6 +34,7 @@ const upload = multer({
 
 // Public routes (read-only)
 router.get('/', thesisController.getTheses);
+router.get('/years/unique', thesisController.getUniqueYears);
 router.get('/:id', thesisController.getThesis);
 
 // Protected routes (admin and student assistant)
