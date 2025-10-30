@@ -108,6 +108,10 @@ const createThesis = async (req, res) => {
       pdfUrl = `/uploads/${req.file.filename}`;
     }
 
+    // Parse authors and advisors if they're strings (from FormData)
+    const authorsData = typeof authors === 'string' ? JSON.parse(authors) : (authors || []);
+    const advisorsData = typeof advisors === 'string' ? JSON.parse(advisors) : (advisors || []);
+
     // Insert thesis
     await query(
       'INSERT INTO thesis (id, title, abstract, authors, advisors, department, program, year, pdfUrl) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -115,8 +119,8 @@ const createThesis = async (req, res) => {
         id,
         title,
         abstract || null,
-        JSON.stringify(authors || []),
-        JSON.stringify(advisors || []),
+        JSON.stringify(authorsData),
+        JSON.stringify(advisorsData),
         department,
         program || null,
         year || null,
@@ -167,12 +171,14 @@ const updateThesis = async (req, res) => {
       values.push(abstract);
     }
     if (authors !== undefined) {
+      const authorsData = typeof authors === 'string' ? JSON.parse(authors) : authors;
       updates.push('authors = ?');
-      values.push(JSON.stringify(authors));
+      values.push(JSON.stringify(authorsData));
     }
     if (advisors !== undefined) {
+      const advisorsData = typeof advisors === 'string' ? JSON.parse(advisors) : advisors;
       updates.push('advisors = ?');
-      values.push(JSON.stringify(advisors));
+      values.push(JSON.stringify(advisorsData));
     }
     if (department !== undefined) {
       updates.push('department = ?');
