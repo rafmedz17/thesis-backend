@@ -9,7 +9,7 @@ router.use(authenticateToken);
 // Get system settings
 router.get('/', getSettings);
 
-// Update system settings (admin only)
-router.put('/', requireAdmin, updateSettings);
+// Update system settings (accessible to all authenticated users)
+router.put('/', updateSettings);
 
 module.exports = router;
