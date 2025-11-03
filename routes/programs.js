@@ -15,9 +15,8 @@ router.get('/', getPrograms);
 // Get single program (public access)
 router.get('/:id', getProgram);
 
-// Admin-only routes
+// Authenticated routes (accessible to all authenticated users)
 router.use(authenticateToken);
-router.use(requireAdmin);
 
 // Create program
 router.post('/', createProgram);
