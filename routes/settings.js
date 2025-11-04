@@ -3,13 +3,11 @@ const router = express.Router();
 const { getSettings, updateSettings } = require('../controllers/settingsController');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
-// All settings routes require admin authentication
-router.use(authenticateToken);
-
-// Get system settings
+// Get system settings (PUBLIC - no authentication required)
+// This allows public visitors to see school name, logo, and colors
 router.get('/', getSettings);
 
-// Update system settings (accessible to all authenticated users)
-router.put('/', updateSettings);
+// Update system settings (requires authentication)
+router.put('/', authenticateToken, updateSettings);
 
 module.exports = router;
