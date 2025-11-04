@@ -18,9 +18,28 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+// Configure CORS to allow frontend requests
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://thesisrepository.ccsdepartment.com',
+  'http://localhost:8080', // For local development
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://thesis-backend-73b9.onrender.com',
-  credentials: true
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
