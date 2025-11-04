@@ -15,11 +15,12 @@ const storage = new CloudinaryStorage({
     folder: 'thesis-pdfs', // Folder name in Cloudinary
     format: async (req, file) => 'pdf', // Force PDF format
     public_id: (req, file) => {
-      // Generate unique filename
+      // Generate unique filename (include .pdf extension)
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
       return `thesis-${uniqueSuffix}`;
     },
     resource_type: 'raw', // For non-image files like PDFs
+    access_mode: 'public', // Allow public access to uploaded files
   },
 });
 
