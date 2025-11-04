@@ -1,21 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
 const thesisController = require('../controllers/thesisController');
 const { authenticateToken, requireAdminOrAssistant } = require('../middleware/auth');
+const { storage } = require('../config/cloudinary');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'thesis-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+// File filter for PDF only
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === 'application/pdf') {
     cb(null, true);
@@ -24,8 +14,9 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Configure multer with Cloudinary storage
 const upload = multer({
-  storage: storage,
+  storage: storage, // Using Cloudinary storage from config
   fileFilter: fileFilter,
   limits: {
     fileSize: 50 * 1024 * 1024 // 50MB limit

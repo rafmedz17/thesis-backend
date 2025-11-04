@@ -102,10 +102,10 @@ const createThesis = async (req, res) => {
     // Generate ID
     const id = generateId();
 
-    // Handle file upload
+    // Handle file upload (Cloudinary provides full URL in req.file.path)
     let pdfUrl = null;
     if (req.file) {
-      pdfUrl = `/uploads/${req.file.filename}`;
+      pdfUrl = req.file.path; // Cloudinary URL
     }
 
     // Parse authors and advisors if they're strings (from FormData)
@@ -193,18 +193,14 @@ const updateThesis = async (req, res) => {
       values.push(year);
     }
 
-    // Handle file upload
+    // Handle file upload (Cloudinary)
     if (req.file) {
-      // Delete old file if exists
-      if (existingThesis.pdfUrl) {
-        const oldFilePath = path.join(__dirname, '..', existingThesis.pdfUrl);
-        if (fs.existsSync(oldFilePath)) {
-          fs.unlinkSync(oldFilePath);
-        }
-      }
+      // Note: Old Cloudinary files can be deleted from Cloudinary dashboard if needed
+      // Or implement Cloudinary deletion using cloudinary.uploader.destroy(public_id)
+      // For now, we'll just update with new URL
 
       updates.push('pdfUrl = ?');
-      values.push(`/uploads/${req.file.filename}`);
+      values.push(req.file.path); // Cloudinary URL
     }
 
     if (updates.length === 0) {
